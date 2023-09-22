@@ -86,13 +86,13 @@
     // Задаем время начала дня (0 часов 0 минут 0 секунд)
     today.setHours(0, 0, 0, 0);
     // Получаем timestamp в миллисекундах
-    let startTimestamp = today.getTime() / 1000;
+    let startTimestamp = Math.floor(today.getTime() / 1000);
   
-    // Создаем объект Date для следующего дня
-    let nextDay = new Date(date);
-    nextDay.setDate(nextDay.getDate() + 1);
-    nextDay.setHours(0, 0, 0, 0);
-    let nextStartTimestamp = nextDay.getTime() / 1000;
+    // // Создаем объект Date для следующего дня
+    // let nextDay = new Date(date);
+    // nextDay.setDate(nextDay.getDate() + 1);
+    // nextDay.setHours(0, 0, 0, 0);
+    //let nextStartTimestamp = nextDay.getTime() / 1000;
   
     return startTimestamp;
   }
@@ -102,10 +102,9 @@
   let dayLinks = document.querySelectorAll('.page-nav__day');
   
   let today = new Date();
-  
   // Устанавливаем актуальную дату для первой вкладки
   dayLinks[0].classList.add('page-nav__day_today');
-  dayLinks[0].dataset.timestamp = calculateStartTimestamp(today);
+  dayLinks[0].dataset.timestamp = calculateStartTimestamp();
   // Добавляем число и день недели
   dayLinks[0].querySelector('.page-nav__day-number').textContent = today.getDate();
   dayLinks[0].querySelector('.page-nav__day-week').textContent = getDayOfWeek(today.getDay());
@@ -126,10 +125,11 @@
     // Добавляем число и день недели
     dayNumberElement.textContent = nextDay.getDate();
     dayWeekElement.textContent = getDayOfWeek(nextDay.getDay());
-    Check(dayWeekElement)
+    Check(dayWeekElement);
   
     // Вычисляем и сохраняем timestamp
-    dayLinks[i].dataset.timestamp = calculateStartTimestamp(nextDay);
+    let minus = nextDay.getDate() - (new Date()).getDate(); 
+    dayLinks[i].dataset.timestamp = calculateStartTimestamp() + minus*(24 * 60 * 60);
     dayLinks[i].onclick = (e) => {
       ClearAnthorDates();
       e.currentTarget.classList.add("page-nav__day_today");

@@ -10,9 +10,25 @@ function GetInfo2(inf) {
       .then(response => response.text())//не могу одну и туже фунцию использовать потмуо что разный запрос ответа 
       .then(result => {
         resolve(result);
+      });
+    });
+}
+
+function GetInfo(info) {
+    return new Promise((resolve, reject) => {
+      fetch("https://jscp-diplom.netoserver.ru/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: info
+      })
+      .then(response => response.json())
+      .then(result => {
+        resolve(result);
       })
       .catch(error => {
-        resolve(error);
+        reject(error);
       });
     });
 }
@@ -32,12 +48,12 @@ function InplantHtml(text) {
     // for (let child of wrapper.children) {
     //     wrapper.removeChild(child);
     // }
-    wrapper.innerHTML=JSON.parse(text);
+    wrapper.innerHTML=text;
 }
 
 function Check() {
     const wrapper = document.querySelector(".conf-step__wrapper");
-    if (wrapper.children.length === 0) {
+    if ([...wrapper.children].length === 0 || [...wrapper.children].length === 1) {
         return true;
     } else {
         return false;
@@ -48,25 +64,33 @@ function UpdateInfo() {
     const info = JSON.parse(localStorage.getItem("clientInfo"));
     console.log(info);
     UpdatePriceTitle(info);
-    GetInfo2(`event=get_hallConfig&timestamp=${Number(info.timeStamp)}&hallId=${Number(info.hallId)}&seanceId=${Number(info.seanceId)}`).then(result => {
+    fetch("https://jscp-diplom.netoserver.ru/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `event=get_hallConfig&timestamp=${Number(info.timeStamp)}&hallId=${Number(info.hallId)}&seanceId=${Number(info.seanceId)}`
+      })
+      .then(response => response.text()).then(result => {
+        console.log(result);
+        if (result === "null") {
+            GetInfo("event=update").then(conf => {
+                const {halls} = conf; 
+                let res = Find(halls,info.hallId);
+                const wrapper = document.querySelector(".conf-step__wrapper");
+        // for (let child of wrapper.children) {
+        //     wrapper.removeChild(child);
+        // }
+                wrapper.innerHTML=res["hall_config"];
+                InitiLizeSits();
+                InitReserve();
+            })
+            return;
+        }
             InplantHtml(result);
-            UpdatePriceTitle(info);
             InitiLizeSits();
             InitReserve();
     });
-    if (Check()) {
-        GetInfo("event=update").then(conf => {
-            const {halls} = conf; 
-            let res = Find(halls,info.hallId);
-            const wrapper = document.querySelector(".conf-step__wrapper");
-    // for (let child of wrapper.children) {
-    //     wrapper.removeChild(child);
-    // }
-            wrapper.innerHTML=res["hall_config"];
-            InitiLizeSits();
-            InitReserve();
-})
-    }
 }
 function UpdatePriceTitle(info) {
     GetInfo("event=update").then(conf => {
