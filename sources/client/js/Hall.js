@@ -48,7 +48,7 @@ function InplantHtml(text) {
     // for (let child of wrapper.children) {
     //     wrapper.removeChild(child);
     // }
-    wrapper.innerHTML=text;
+    wrapper.innerHTML=JSON.parse(text);
 }
 
 function Check() {
@@ -73,7 +73,7 @@ function UpdateInfo() {
       })
       .then(response => response.text()).then(result => {
         console.log(result);
-        if (result === "null") {
+        if (result == "null") {
             GetInfo("event=update").then(conf => {
                 const {halls} = conf; 
                 let res = Find(halls,info.hallId);
