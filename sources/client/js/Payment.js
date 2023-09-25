@@ -17,7 +17,6 @@ function UpdateInfo() {
     const btn  = document.querySelector(".acceptin-button");
     btn.onclick = (e) => {
         GetInfo(`event=sale_add&timestamp=${info.timeStamp}&hallId=${info.hallId}&seanceId=${info.senaceId}&hallConfiguration=${config}`).then(result => {
-            console.log(result);
             window.location.href = "./ticket.html";
         })
     };

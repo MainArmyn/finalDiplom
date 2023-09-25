@@ -147,8 +147,13 @@ function InitReserve() {
             let old = JSON.parse(localStorage.getItem("clientInfo"));
             old.sit = sites;
             old.cost = cost;
+            document.querySelectorAll(".conf-step__chair_selected").forEach(item => {
+                item.classList.remove("conf-step__chair_selected");
+                item.classList.add("conf-step__chair_taken");
+            })
+            const newconfig = document.querySelector(".conf-step__wrapper");
             localStorage.setItem("clientInfo",JSON.stringify(old));
-            localStorage.setItem("conf",config.innerHTML);
+            localStorage.setItem("conf",newconfig.innerHTML);
             window.location.href = "./payment.html";
         }
     }

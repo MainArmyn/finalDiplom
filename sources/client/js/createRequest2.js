@@ -34,7 +34,8 @@
   
   function WorkWithSeances(seances,halls) {
       seances = seances.result;
-      halls = halls.result.filter(fil => fil['hall_open'] === "1");
+      const newHalls = halls.result.filter(fil => fil['hall_open'] === "1");
+      //фильтруем по доступности
       const newFilms = [...document.querySelectorAll(".movie")];
       newFilms.forEach(film => {
           let filmSeances = seances.filter(seance => film.dataset.id === seance["seance_filmid"]);
@@ -48,7 +49,7 @@
               }
           }
           for (let key in seanceHall) {
-              let infoHall = halls.filter(hall => hall["hall_id"] === key)[0];
+              let infoHall = newHalls.filter(hall => Number(hall["hall_id"]) === Number(key))[0];
               if (infoHall === undefined) {
                 continue;
               }
@@ -129,7 +130,7 @@
   
     // Вычисляем и сохраняем timestamp
     let minus = nextDay.getDate() - (new Date()).getDate(); 
-    dayLinks[i].dataset.timestamp = calculateStartTimestamp() + minus*(24 * 60 * 60);
+    dayLinks[i].dataset.timestamp = calculateStartTimestamp() + i*(24 * 60 * 60);
     dayLinks[i].onclick = (e) => {
       ClearAnthorDates();
       e.currentTarget.classList.add("page-nav__day_today");
